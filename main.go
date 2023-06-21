@@ -157,12 +157,8 @@ for {
 			fmt.Println("Invalid input")
 			continue
 		}
-
 		findByBlockNumber(input1)
-		
-
-
-    case 2:
+	case 2:
 		GetAllBlocksFromFile(filePath)
         
 	case 3:
@@ -401,7 +397,8 @@ func findByBlockNumber(blockNumber int){
     return
    }
 
-fmt.Println("Required Block:\n",desiredBlock)
+fmt.Printf("Block Number:%d\n",blockNumber)
+fmt.Println(desiredBlock)
 fmt.Println("*********************************")
 
 
