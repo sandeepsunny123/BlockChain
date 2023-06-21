@@ -131,11 +131,49 @@ for block:=range myChan{
 
 
 }
-GetAllBlocksFromFile(filePath)
 
 
 
-findByBlockNumber(1)
+
+
+
+
+for {
+	fmt.Println("Enter a number of your choice :")
+	fmt.Println("1.To get Block by number\n2.To fetch details of all blocks\n3.To exit")
+	var number int 
+	_,err:=fmt.Scanln(&number)
+	if err != nil {
+		fmt.Println("Invalid input")
+		continue
+	}
+
+	switch number{
+	case 1:
+        fmt.Println("Enter the block Number you wanted to see")
+		var input1 int
+		_,err:=fmt.Scanln(&input1)
+		if err != nil {
+			fmt.Println("Invalid input")
+			continue
+		}
+
+		findByBlockNumber(input1)
+		
+
+
+    case 2:
+		GetAllBlocksFromFile(filePath)
+        
+	case 3:
+		fmt.Println("Exiting from the program")
+		return
+    default:
+        fmt.Println("Number is not 1, 2, or 3.")
+   }
+}
+
+
 
 }//main end
 
@@ -284,6 +322,7 @@ func addBlockToFile(filePath string,block Block) {
 	
 }
 func GetAllBlocksFromFile(filename string) {
+
 	
 file, err := os.Open("block.json")
 if err != nil {
@@ -296,6 +335,7 @@ if err != nil {
     fmt.Println("Error reading file:", err)
     return 
 }
+fmt.Println("The blocks are listed below:")
 blocks := []Block{}
 for _, line := range strings.Split(string(contents), "\n") {
     if line == "" {
@@ -312,6 +352,7 @@ for _, line := range strings.Split(string(contents), "\n") {
 
     blocks = append(blocks, block)
   }
+  fmt.Println("*********************************")
 
 }
 
@@ -350,6 +391,7 @@ func findByBlockNumber(blockNumber int){
    for _, block := range blocks {
     if block.BlockNumber == desiredBlockNumber {
         desiredBlock = block
+		fmt.Println("found")
         break
      }
    }
@@ -359,7 +401,8 @@ func findByBlockNumber(blockNumber int){
     return
    }
 
-fmt.Println("Desired Block:", desiredBlock)
+fmt.Println("Required Block:\n",desiredBlock)
+fmt.Println("*********************************")
 
 
 
