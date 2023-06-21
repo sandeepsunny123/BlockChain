@@ -1,3 +1,5 @@
+
+
 package main
 import(
 	"github.com/syndtr/goleveldb/leveldb"
@@ -155,7 +157,6 @@ func addTransactionToBlock(Txns []transaction,db *leveldb.DB,blockSize int,myCha
 			BlockNumber:i+1,
 			TimeStamp:12,
 			Status:Pending,
-			PrevBlockHash:"ec223",
 		}
 		
 		block.push(Txns[start:end],db)
@@ -212,6 +213,7 @@ func (block *Block) push(Txns []transaction,db *leveldb.DB){
 					return 
 				}
 				temp.Valid=res
+				temp.TransactionHash=Txns[i].TransactionHash
 				block.Txns=append(block.Txns,temp)
 			
 			
@@ -330,7 +332,7 @@ func findByBlockNumber(blockNumber int){
    blocks := []Block{}
    for _, line := range strings.Split(string(contents), "\n") {
      if line == "" {
-        continue // Skip empty lines
+        continue 
     }
 
     block := Block{}
@@ -342,7 +344,7 @@ func findByBlockNumber(blockNumber int){
 
     blocks = append(blocks, block)
    }
-    desiredBlockNumber := blockNumber // Replace with the desired block number
+    desiredBlockNumber := blockNumber 
 
      var desiredBlock Block
    for _, block := range blocks {
@@ -377,7 +379,7 @@ if err != nil {
 blocks := []Block{}
 for _, line := range strings.Split(string(contents), "\n") {
     if line == "" {
-        continue // Skip empty lines
+        continue 
     }
 
     block := Block{}
@@ -389,9 +391,9 @@ for _, line := range strings.Split(string(contents), "\n") {
 
     blocks = append(blocks, block)
 }
-desiredBlockNumber := blockNumber // Replace with the desired block number
+desiredBlockNumber := blockNumber 
 
-// var desiredBlock Block
+
 for _, block := range blocks {
     if block.BlockNumber == desiredBlockNumber {
         
