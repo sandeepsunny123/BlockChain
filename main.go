@@ -325,7 +325,6 @@ func addBlockToFile(filePath string,block Block) {
 }
 func GetAllBlocksFromFile(filename string) {
 
-	
 file, err := os.Open("block.json")
 if err != nil {
     fmt.Println("Error opening file:", err)
@@ -338,10 +337,10 @@ if err != nil {
     return 
 }
 fmt.Println("The blocks are listed below:")
-blocks := []Block{}
+
 for _, line := range strings.Split(string(contents), "\n") {
     if line == "" {
-        continue // Skip empty lines
+        continue 
     }
 
     block := Block{}
@@ -350,9 +349,10 @@ for _, line := range strings.Split(string(contents), "\n") {
         fmt.Println("Error unmarshalling block:", err)
         return 
     }
+	fmt.Printf("BLOCK NUMBER %d: \n\n",block.BlockNumber)
 	fmt.Println(block)
+	fmt.Println()
 
-    blocks = append(blocks, block)
   }
   fmt.Println("*********************************")
 
@@ -474,10 +474,10 @@ if err != nil {
     return 
 }
 fmt.Println("The processing time for ech block is listed below:")
-blocks := []Block{}
+
 for _, line := range strings.Split(string(contents), "\n") {
     if line == "" {
-        continue // Skip empty lines
+        continue 
     }
 
     block := Block{}
@@ -489,7 +489,6 @@ for _, line := range strings.Split(string(contents), "\n") {
 	fmt.Printf("The time required for the block number %d is: ",block.BlockNumber)
 	fmt.Println(block.TimeStamp)
 
-    blocks = append(blocks, block)
   }
   fmt.Println("*********************************")
 
