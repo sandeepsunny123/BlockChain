@@ -11,7 +11,7 @@ import(
 	"sync"
 	"os"
 	//"bufio"
-	//"time"
+	"time"
 	"io/ioutil"
 	"strings"
 	
@@ -36,7 +36,7 @@ const(
 type Block struct{
 	BlockNumber int   `json:"blockNumber"`
 	Txns []transaction   `json:"transaction"`
-	TimeStamp int         `json:"TimeStamp"`
+	TimeStamp time.Duration         `json:"blockProcessingTime"`
 	Status BlockStatus  `json:"status"`
 	PrevBlockHash string      `json:"prevBlockHash"`
 	BlockHash string           `json:"blockHash"`
@@ -140,7 +140,7 @@ for block:=range myChan{
 
 for {
 	fmt.Println("Enter a number of your choice :")
-	fmt.Println("1.To get Block by number\n2.To fetch details of all blocks\n3.To exit")
+	fmt.Println("1.To get Block by number\n2.To fetch details of all blocks\n3.display processing time for each block\n4.To exit")
 	var number int 
 	_,err:=fmt.Scanln(&number)
 	if err != nil {
@@ -160,10 +160,13 @@ for {
 		findByBlockNumber(input1)
 	case 2:
 		GetAllBlocksFromFile(filePath)
-        
 	case 3:
+		displayBlockProcessing(filePath)
+        
+	case 4:
 		fmt.Println("Exiting from the program")
 		return
+
     default:
         fmt.Println("Number is not 1, 2, or 3.")
    }
@@ -187,6 +190,7 @@ func addTransactionToBlock(Txns []transaction,db *leveldb.DB,blockSize int,myCha
 		if end > totalTransactions {
 			end=totalTransactions
 		}
+		blockAStartTime := time.Now()
 		block:=Block{
 			BlockNumber:i+1,
 			TimeStamp:12,
@@ -196,6 +200,8 @@ func addTransactionToBlock(Txns []transaction,db *leveldb.DB,blockSize int,myCha
 		block.push(Txns[start:end],db)
 		
 		block.update(Commited)
+		blockADuration := time.Since(blockAStartTime)
+		block.TimeStamp=blockADuration
 		myChan <- block
 	}
 	close(myChan)
@@ -451,5 +457,42 @@ func calculateBlockHash(block Block) string {
 	blockBytes, _ := json.Marshal(block)
 	hashBytes := sha256.Sum256(blockBytes)
 	return fmt.Sprintf("%x", hashBytes)
+}
+
+
+
+func displayBlockProcessing(filePath string){
+file, err := os.Open("block.json")
+if err != nil {
+    fmt.Println("Error opening file:", err)
+    return 
+}
+defer file.Close()
+contents, err := ioutil.ReadAll(file)
+if err != nil {
+    fmt.Println("Error reading file:", err)
+    return 
+}
+fmt.Println("The processing time for ech block is listed below:")
+blocks := []Block{}
+for _, line := range strings.Split(string(contents), "\n") {
+    if line == "" {
+        continue // Skip empty lines
+    }
+
+    block := Block{}
+    err := json.Unmarshal([]byte(line), &block)
+    if err != nil {
+        fmt.Println("Error unmarshalling block:", err)
+        return 
+    }
+	fmt.Printf("The time required for the block number %d is: ",block.BlockNumber)
+	fmt.Println(block.TimeStamp)
+
+    blocks = append(blocks, block)
+  }
+  fmt.Println("*********************************")
+
+
 }
 
