@@ -51,6 +51,7 @@ type blockInterface interface{
 
 func main(){
 
+//creating 1000 entries in leveldb
 	db,err:=leveldb.OpenFile("data/levelDb",nil)
 	if err != nil{
 	log.Fatal(err)
@@ -81,25 +82,21 @@ for i:=1;i<=1000;i++ {
 
  }
 
+ //reading input data from input.json file
 
- //input transaction given for processing in the form of array of json objects
-input := `[
-    {"key":"SIM1","data" : {"val": 2, "ver": 1.0}},
-	{"key":"SIM2","data" : {"val": 3, "ver": 2.0}},
-	{"key":"SIM3","data" : {"val": 4, "ver": 2.0}},
-	{"key":"SIM4","data" : {"val": 5, "ver": 1.0}},
-	{"key":"SIM5","data" : {"val": 6, "ver": 3.0}},
-	{"key":"SIM6","data" : {"val": 7, "ver": 1.0}}
-]`
-
-
+fileForInput := "input.json"
+inputJson,err:=ioutil.ReadFile(fileForInput)
+if err != nil {
+	log.Fatal("Error while reading file:",err)
+}
 
 var Txns []transaction
-err=json.Unmarshal([]byte(input),&Txns)
+err=json.Unmarshal([]byte(inputJson),&Txns)
 if err != nil {
 	log.Fatal("error sorry",err)
 }
 
+//calculating transaction hashes concurently
 wg :=&sync.WaitGroup{}
 wg.Add(len(Txns))
 
@@ -108,7 +105,6 @@ for i:=0;i<len(Txns);i++ {
 }
 
 wg.Wait()
-
 
 filePath:="blocks"
 blockSize:=2
@@ -494,7 +490,5 @@ for _, line := range strings.Split(string(contents), "\n") {
 
   }
   fmt.Println("*********************************")
-
-
 }
 
